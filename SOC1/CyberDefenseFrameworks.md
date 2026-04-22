@@ -427,3 +427,44 @@ Overwrite or corrupt data.
     - STRIDE
     - DREAD
     - CVSS
+    
+## d. Introduction the Unified Kill Chain
+<img width="679" height="440" alt="image" src="https://github.com/user-attachments/assets/55088ec1-6a85-41f5-9b05-29ad8428685d" />
+
+The Unified Kill Chain (UKC), created by Paul Pols in 2017, is a modern cybersecurity framework designed to complement (not replace) models like Lockheed Martin’s Kill Chain and MITRE ATT&CK.
+    - It defines 18 detailed phases of an attack (from reconnaissance to data exfiltration and attacker intent)
+    - It reflects real-world attacks, which are non-linear and adaptive.
+    - It covers the entire attack lifecycle, including before, during, and after intrusion.
+    - It is especially useful for SOC operations, threat hunting, and incident response.
+
+👉 Overall, UKC provides a more complete and detailed view of cyber attacks compared to traditional frameworks.
+
+<img width="428" height="399" alt="image" src="https://github.com/user-attachments/assets/5b925930-f708-4277-9ef2-69720b5888e9" />
+
+## e. Goal : In (Initial Foothold)
+This section of the Unified Kill Chain focuses on how an attacker gains access and maintains control of a system.
+<img width="646" height="456" alt="image" src="https://github.com/user-attachments/assets/ed41ad93-e813-4dd9-bbc0-8476faf649a5" />
+
+- Reconnaissance (TA0043): Gather information (systems, services, users, credentials, network).
+- Weaponization (TA0001): Prepare tools/infrastructure (payloads, C2 servers).
+- Social Engineering (TA0001): Manipulate users (phishing, impersonation).
+- Exploitation (TA0002): Use vulnerabilities to execute code.
+- Persistence (TA0003): Maintain long-term access (backdoors, services).
+- Defence Evasion (TA0005): Avoid detection (bypass AV, firewall, IDS).
+- Command & Control (TA0011): Communicate with compromised system to control it.
+- Pivoting (TA0008): Move laterally to other internal systems.
+  --> These phases show how attackers enter, stay, hide, and expand inside a network.
+![Uploading image.png…]()
+
+## f. Goal: Through (Network Propagation)
+In the Unified Kill Chain, the “Through” phase happens after the attacker gains an initial foothold. The goal is to expand access, gain privileges, and move deeper into the network.
+
+- Pivoting (TA0008): Use the compromised system as a base to access internal systems.
+- Discovery (TA0007): Gather detailed info (users, permissions, files, network).
+- Privilege Escalation (TA0004): Gain higher access (admin/root).
+- Execution (TA0002): Run malicious code (trojans, scripts, tasks).
+- Credential Access (TA0006): Steal usernames/passwords (keylogging, dumping).
+- Lateral Movement (TA0008): Move to other systems in the network.
+    -->  Goal: deepen control and spread across the network.
+  ## g. Goal Out (Action on Objectives)
+  
