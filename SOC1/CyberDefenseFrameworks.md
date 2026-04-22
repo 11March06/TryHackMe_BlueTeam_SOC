@@ -269,3 +269,127 @@ Following attack phases in this:
 - Actions on Objectives
 
 ## b. Reconnaissance
+🔎 Reconnaissance (Recon)
+--> Reconnaissance is the first phase of an attack, where attackers gather information about a target to plan their next steps.
+
+- Good recon → more effective and targeted attacks
+- Poor recon → sloppy and likely to fail
+
+🧠 OSINT (Open-Source Intelligence)
+
+OSINT means collecting information from public sources, such as:
+- Search engines
+- Social media
+- News and blogs
+- Public records
+- WHOIS / technical data
+
+⚙️ Types of Recon
+    i. Passive Recon
+
+No direct interaction with the target
+Hard to detect
+Example: WHOIS lookup, social media research
+    ii. Active Recon
+
+Direct interaction with the target
+Easier to detect
+Example: port scanning, probing services
+📧 Email Harvesting
+
+Collecting email addresses to use in attacks like phishing.
+
+🛠️ Common Tools
+theHarvester → gathers emails, domains, IPs
+Hunter.io → finds emails from domains
+OSINT Framework → collection of OSINT tools
+
+## c. Weaponization
+⚔️ Weaponization
+--> After reconnaissance, the attacker turns collected information into a usable attack payload.
+🔑 Key Terms
+    - Malware → malicious software that damages or gains access
+    - Exploit → code that takes advantage of a vulnerability
+    - Payload → the actual malicious code executed on the victim
+🧠 What happens in this phase?
+The attacker:
+    - Creates or buys malware (e.g., from the Dark Web)
+    - Combines exploit + payload into a deliverable attack
+⚙️ Common Techniques
+    - Malicious Microsoft Office files (macros/VBA)
+    - Infected USB drives
+    - Setting up C2 (Command & Control) servers
+    - Installing backdoors
+    - Creating phishing templates that look legitimate
+
+## d. Delivery
+📦 Delivery
+--> Delivery is the phase where the attacker sends the payload to the target.
+
+🧠 What happens in this phase?
+The attacker chooses how to deliver malware into the victim’s system.
+🚀 Common Methods
+Phishing Email
+→ Malicious link or attachment (can be spear phishing for specific targets)
+USB Drop Attack
+→ Infected USB left in public or sent to victims
+Watering Hole Attack
+→ Compromised websites that victims trust → leads to malware download
+
+## e. Exploitation
+💥 Exploitation
+Exploitation is when the attacker’s malicious code runs on the target system by taking advantage of a vulnerability.
+
+🧠 What happens in this phase?
+The payload is executed
+The attacker gains initial access
+May escalate privileges or move inside the network
+⚙️ Common Techniques
+Malicious macros → triggered when opening infected files
+Zero-day exploits → unknown, unpatched vulnerabilities
+Known CVEs → publicly known but unpatched flaws
+🚨 Signs of Exploitation
+Unexpected processes running
+Registry changes / new services
+Suspicious command-line activity
+
+## f. Installation
+
+🛠️ Installation (Persistence)
+After gaining access, the attacker installs a backdoor to maintain long-term access to the system.
+🧠 What happens in this phase?
+Create persistent access
+Ensure they can reconnect later even if the system is patched or rebooted
+⚙️ Common Techniques
+Web shell → malicious script on a web server
+Backdoor (e.g., Meterpreter) → remote control of victim machine
+Modify Windows services → run malware automatically
+Registry Run Keys / Startup Folder → execute malware at login
+🕵️ Evasion Technique
+Timestomping → modify file timestamps to avoid detection
+
+## g. Command & Control
+🌐 Command & Control (C2)
+--> C2 is the phase where the attacker establishes communication with the infected system to control it remotely.
+
+🧠 What happens in this phase?
+Malware connects to an attacker-controlled server
+The infected machine sends regular signals (beaconing)
+Attacker can send commands and control the system
+⚙️ Common C2 Channels
+HTTP/HTTPS (ports 80/443)
+→ blends with normal web traffic (harder to detect)
+DNS (DNS tunneling)
+→ uses DNS requests to communicate secretly
+(Older method) IRC → now mostly outdated
+
+## h. Actions on Objectives (Exfiltration)
+--> After going through six phases of the attack, Megatron can finally achieve his goals, which means taking action on the original objectives. With hands-on keyboard access, the attacker can achieve the following: 
+
+* Collect the credentials from users.
+* Perform privilege escalation (gaining elevated access like domain administrator access from a workstation by exploiting the misconfiguration).
+* Internal reconnaissance (for example, an attacker gets to interact with internal software to find its vulnerabilities).
+* Lateral movement through the company's environment.
+* Collect and exfiltrate sensitive data.
+* Deleting the backups and shadow copies. Shadow Copy is a Microsoft technology that can create backup copies, snapshots of computer files, or volumes. 
+Overwrite or corrupt data.
