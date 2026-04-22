@@ -454,7 +454,7 @@ This section of the Unified Kill Chain focuses on how an attacker gains access a
 - Command & Control (TA0011): Communicate with compromised system to control it.
 - Pivoting (TA0008): Move laterally to other internal systems.
   --> These phases show how attackers enter, stay, hide, and expand inside a network.
-![Uploading image.png…]()
+<img width="643" height="432" alt="image" src="https://github.com/user-attachments/assets/03009ebf-e735-47e6-89af-e681b11ef75e" />
 
 ## f. Goal: Through (Network Propagation)
 In the Unified Kill Chain, the “Through” phase happens after the attacker gains an initial foothold. The goal is to expand access, gain privileges, and move deeper into the network.
@@ -467,4 +467,87 @@ In the Unified Kill Chain, the “Through” phase happens after the attacker ga
 - Lateral Movement (TA0008): Move to other systems in the network.
     -->  Goal: deepen control and spread across the network.
   ## g. Goal Out (Action on Objectives)
-  
+<img width="643" height="432" alt="image" src="https://github.com/user-attachments/assets/fe496fa1-5eb1-499f-b5b1-957f2eb22f15" />
+"Out" Goal - Final Stage of the Attack
+At this stage, the attacker already has
+    - Persistent access
+    - Control over key systems
+    - Visibility into valuable data
+
+Now they focus on achieving their end objective, usually tied to the CIA triad:
+    - Confidentiality -> steal data
+    - Integrity -> alter data
+    - Availability -> disrupt systems
+    1. 📥 Collection (MITRE ATT&CK TA0009)
+What happens:
+    - Attacker gathers sensitive data from compromised systems
+Common targets:
+    - Files (documents, databases)
+    - Browser data (cookies, saved passwords)
+    - Emails
+    - Audio/video recordings
+    - Keystrokes (via keyloggers)
+Why it matters:
+    - This is where confidential data is staged before theft
+Real-world examples:
+    - Dumping credentials from LSASS
+    - Collecting files into a hidden folder before exfiltration
+    2. 📤 Exfiltration (MITRE ATT&CK TA0010)
+What happens:
+    - Data is sent out of the victim environment
+Techniques:
+    - Encryption + compression (to avoid detection)
+    - Using existing C2 channels
+Exfiltration over:
+    - HTTPS
+    - DNS tunneling
+    - Cloud services (Dropbox, Google Drive)
+Key idea:
+    - Blend in with normal traffic → avoid SOC detection
+Example:
+    - Sending zipped data over HTTPS to attacker-controlled server
+    3. 💥 Impact (MITRE ATT&CK TA0040)
+What happens:
+    - Attacker actively damages or disrupts systems
+Goals:
+    - Destroy data
+    - Encrypt systems (ransomware)
+    - Interrupt services
+Common techniques:
+    - Disk wiping
+    - Account lockouts
+    - Data encryption (ransomware)
+    - Website defacement
+    - Denial of Service (DoS)
+Impact on CIA:
+    - Integrity → data modified
+    - Availability → systems unusable
+    4. 🎯 Objectives (Final Goal)
+This is the “why” behind the attack.
+Typical attacker motivations:
+💰 Financial
+    - Ransomware → demand payment
+    - Sell stolen data
+🕵️ Espionage
+    - Steal intellectual property
+    - Monitor communications
+🔥 Destruction / Sabotage
+    - Disrupt operations
+    - Damage infrastructure
+📢 Reputation damage
+    - Leak confidential data publicly     
+
+**🧠 SOC Analyst Perspective (Important)**
+
+When monitoring this phase, look for:
+    - Unusual data movement
+    - Large outbound traffic spikes
+    - Suspicious archive files (.zip, .rar)
+    - Connections to unknown external servers
+    - Use of unusual protocols (DNS tunneling)
+
+🔑 Simple Way to Remember
+    - Collection → Gather data
+    - Exfiltration → Send data out
+    - Impact → Break things
+    - Objectives → Achieve attacker goal
