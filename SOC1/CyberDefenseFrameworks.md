@@ -393,3 +393,37 @@ DNS (DNS tunneling)
 * Collect and exfiltrate sensitive data.
 * Deleting the backups and shadow copies. Shadow Copy is a Microsoft technology that can create backup copies, snapshots of computer files, or volumes. 
 Overwrite or corrupt data.
+
+# 3. Unified Kill Chain
+## a. Introduction
+- Understanding why frameworks such as the UKC are important and helpful in establishing a good cybersecurity posture
+- Using the UKC to understand an attacker's motivation, methodologies and tactics
+- Understanding the various phases of the UKC
+- Discover that the UKC is a framework that is used to complement other frameworks such as MITRE.
+
+## b. Kill Chain?
+--> “Kill Chain” is a term used to explain the various stages of an attack
+--> Is used to describe the methodology/path attackers such as hackers or APTs use to approach and intrude a target.
+
+## c. Threat Modelling ?
+🛡️ Threat Modelling
+    - Threat modelling is a process used to identify, analyze, and reduce security risks in a system.
+
+🔑 Key Steps
+    - Identify assets
+→ What systems/apps need protection and how critical they are
+    - Find vulnerabilities
+→ What weaknesses exist and how attackers could exploit them
+    - Create mitigation plan
+→ How to fix or reduce those risks
+    - Implement prevention measures
+→ Policies, training, secure development (e.g., SDLC)
+
+🎯 Purpose
+    - Provides a big-picture view of system security
+    - Helps reduce risks and prevent future attacks
+
+🧠 Common Frameworks
+    - STRIDE
+    - DREAD
+    - CVSS
