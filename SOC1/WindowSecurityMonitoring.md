@@ -409,3 +409,6 @@ Always check all user profiles, not just Administrator
 🔹 Key Insight
 
 👉 PowerShell history = attacker’s command timeline
+
+# 2. Window Threat Detection 1
+## a. Introduction 
