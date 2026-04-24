@@ -412,3 +412,223 @@ Always check all user profiles, not just Administrator
 
 # 2. Window Threat Detection 1
 ## a. Introduction 
+Explore how threat actors access and breach Windows machines
+Learn common Initial Access techniques via real-world examples
+Practice detecting every technique using Windows event logs
+
+## b. Initial Access
+  - Initial Access is the first stage of a cyber attack where a threat actor successfully gains entry into a target system. Think of it as breaking through the “front door” of a system.
+  - There are two main ways attackers achieve Initial Access:
+
+  1. Exposed Services
+--> Attackers exploit systems that are directly accessible from the internet, such as RDP, web servers, or mail servers. These systems are constantly scanned for weak passwords, misconfigurations, or vulnerabilities.
+
+Common MITRE techniques:
+  - T1133 – External Remote Services: Exploiting exposed services like RDP, SSH, or VNC.
+  - T1190 – Exploit Public-Facing Application: Exploiting vulnerable applications like web or mail servers.
+<img width="664" height="196" alt="image" src="https://github.com/user-attachments/assets/56a1be14-6e27-4576-a4b7-6188039d11cf" />
+
+  2. User-Driven Attacks
+  - Attackers trick users into helping them infect the system. This relies on human behavior rather than technical vulnerabilities.
+
+Common MITRE techniques:
+  - T1566 – Phishing: Users are tricked into opening malicious links or attachments.
+  - T1091 – Removable Media: Infection through USB devices or external media.
+<img width="666" height="191" alt="image" src="https://github.com/user-attachments/assets/54fad2ae-4f2a-49cb-a1a8-e353763bccc7" />
+
+Key Idea
+  - Attackers will use any available method—technical weaknesses or human mistakes—to gain their first foothold in a system
+
+## c. Intial Access via RDP
+🔴 Key Risks of Exposed RDP
+    - RDP exposed to the internet is heavily targeted by botnets
+    - Weak passwords (e.g., 12345678) are quickly brute-forced
+    - Millions of RDP systems are publicly accessible and frequently compromised
+    - Compromised RDP often leads directly to ransomware attacks (sometimes called “Ransomware Deployment Protocol”)
+
+🧠 Attack Flow in the Scenario
+  - Scanning phase
+    - Attackers find open RDP ports (not directly visible in logs)
+  - Brute-force attack
+    - Many failed login attempts
+    - Detected using:
+      - Event ID 4625 (failed logins)
+      - Logon Types 3 and 10
+      - External IP addresses
+  - Successful RDP login (Initial Access)
+    - Detected using:
+      - Event ID 4624 (successful login)
+      - Logon Type 10
+    - Identifies the account used for compromise
+  - Post-exploitation activity
+    - Attacker interacts via RDP
+    - Use Logon ID correlation to link activities
+    - Sysmon logs show processes created by attacker
+
+🛠️ SOC Detection Strategy
+    - Monitor spikes in 4625 failed logins
+    - Identify brute-force patterns from single IPs
+    - Track successful 4624 Logon Type 10 events
+    - Correlate Logon ID across Security + Sysmon logs
+
+## d. Initital Access via Phishing
+This section explains how phishing is still one of the most dangerous attack methods because it bypasses firewalls by targeting users directly.
+
+🔴 Key Phishing Techniques
+1. Malicious Binary Attachments
+
+Attackers send files like:
+
+.exe
+.com
+.scr
+.cpl
+
+They often disguise them as:
+
+invoice.pdf.exe
+meeting.com
+
+👉 Windows hides extensions by default, making them look harmless.
+
+2. LNK Shortcut Attacks
+
+Attackers use .lnk files (shortcuts) that:
+
+Look like normal documents or websites
+Actually execute PowerShell or scripts
+Download malware like RATs (e.g., RemcosRAT)
+
+Example behavior:
+
+LNK file → runs PowerShell → downloads malware → executes it
+
+🔍 Detection idea (SOC perspective)
+Check file type mismatches
+Inspect shortcut target (.lnk properties)
+Look for PowerShell execution chains in logs
+Monitor downloads from suspicious domains
+
+## e.This section explains how SOC analysts detect malicious file downloads and execution chains using Sysmon logs in Windows.
+
+🔍 Key Idea
+
+Attackers often use phishing attachments like:
+
+.exe (direct malware)
+.zip, .rar (compressed malware)
+Double extension files like invoice.pdf.exe
+
+Sysmon helps track every step of the attack lifecycle.
+
+⚙️ Typical Attack Chain (Sysmon Events)
+1. Browser launch (Event ID 1)
+A web browser (Edge, Chrome) is started
+Parent process: explorer.exe
+
+👉 Shows user activity begins
+
+2. File download (Event ID 11)
+Browser downloads file into Downloads folder
+
+Example:
+
+invoice.zip
+
+👉 Indicates possible phishing attachment delivery
+
+3. File extraction (Event ID 11)
+Archive is unpacked using Explorer or tools like 7-Zip
+
+Example:
+
+invoice.pdf.exe
+
+👉 This is often the malicious payload hidden behind a fake PDF
+
+4. Execution (Event ID 1)
+User runs the file
+Parent process: explorer.exe
+Child process: malicious .exe
+
+👉 This is the actual compromise (execution stage)
+
+⚠️ Important Insight: LNK Attacks
+.lnk files (shortcuts) are dangerous because:
+They may not show clear execution logs
+They can directly trigger PowerShell or malware
+How SOC detects LNK attacks:
+
+Even if execution is hidden, you can still detect it by:
+
+Checking file creation in Downloads
+Finding .lnk files before execution
+Observing suspicious parent process like:
+explorer.exe → powershell.exe
+
+👉 Key idea:
+
+LNK execution itself is often invisible in logs, but file creation + PowerShell behavior reveals the attack.
+
+## f. Initial Access via USB
+This section explains how USB/removable media attacks are still a major Initial Access technique, even in modern cloud environments.
+
+🔴 Why USB attacks are still dangerous
+USB attacks bypass firewalls completely
+Can work without internet connection
+Can spread automatically or via user action
+Still actively used by malware families like:
+Raspberry Robin
+Camaro Dragon
+📦 Common USB attack scenarios
+1. Fake “gift USB” attack
+Victim receives infected USB (e.g., “HR gift”)
+User plugs it in and opens a file
+Malware executes silently in background
+2. Supply chain / third-party infection
+USB used at external services (e.g., print shop)
+Their system is already infected
+Malware spreads back to user’s USB and home PC
+⚙️ Common USB malware techniques
+
+Attackers often:
+
+Hide real files and create .lnk shortcuts
+Replace folders with fake .exe files
+
+Use double extensions like:
+
+photo.jpg.exe
+Trick users into clicking via Explorer UI
+🔍 How SOC detects USB-based attacks
+Key indicators in Sysmon:
+1. Execution from USB drive
+
+Look for process paths like:
+
+E:\malware.exe
+
+👉 This shows execution from external media
+
+2. Malware execution via Explorer
+
+Parent process:
+
+explorer.exe
+
+Child process:
+
+USB file (.exe / .lnk)
+3. File creation on USB
+New suspicious files appearing on removable drive
+Example:
+.lnk
+.exe
+hidden payload files
+⚠️ Key SOC insight
+
+USB attacks look very similar to phishing:
+
+Both rely on user interaction
+Both execute via Explorer (GUI)
+Both are hard to trace without Sysmon correlation
