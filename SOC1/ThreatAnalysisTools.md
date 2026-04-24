@@ -256,6 +256,45 @@ MalwareBazaar complements this by:
 Key idea: --> File hashes act as an immutable fingerprint of malware, allowing SOC analysts to reliably identify threats even when everything else (name, path, disguise) changes.
 
 ## d. Sandbox Analysis
+Dynamic analysis (sandboxing) means executing a suspicious file in a safe, isolated virtual environment to observe its real behaviour.
+What sandboxes are used for
+
+SOC analysts use sandboxes to:
+
+Confirm execution of malware
+Extract runtime IOCs (domains, IPs, mutexes, dropped files)
+Map behaviour to MITRE ATT&CK techniques
+Common sandbox tools
+Hybrid Analysis
+Fast behavioural overview
+MITRE ATT&CK mapping and risk scoring
+Good for SOC reporting and triage
+Joe Sandbox
+Deep technical analysis (system calls, memory, strings)
+Used for advanced reverse engineering
+Key outputs from sandbox analysis
+Process execution trees
+File drops and registry changes
+Network connections (C2 domains/IPs)
+Behavioural indicators of compromise (IOCs)
+Threat scores and malware classification
+Limitations of sandboxing
+
+Malware can evade detection through:
+
+Evasion techniques
+Detecting virtual machines or sandboxes
+Anti-debugging checks
+Time limitations
+Sandboxes may stop before malware fully executes
+Delayed payloads may not trigger
+Encrypted traffic
+HTTPS or DNS tunneling hides communication
+Fileless malware
+Runs in memory (PowerShell, WMI) without dropping files
+Key takeaway
+
+Sandboxing is powerful for understanding malware behaviour, but it must be combined with other CTI sources (hashes, feeds, OSINT, logs) to avoid blind spots and false negatives.
 
 ## e. Threat Intelligence Challenge
 
