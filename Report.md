@@ -2,7 +2,7 @@
 - A "log" is a record of events, activities, or access attempts on a system. Logs are crucial for monitoring, detecting suspicious behavior, and investigating incidents. They track who logged in, when, from where, and what actions were performed.
 
 2. Types of Logs
-## 📘 Types of Logs
+##Types of Logs**
 
 | Log Type | Definition | Examples | Purpose |
 | --- | --- | --- | --- |
@@ -14,5 +14,5 @@
 | Event logs | General record of significant system or application events. | Windows Event Viewer entries. | Centralized monitoring of system health. |
 | Trace logs | Very detailed logs used for debugging, often capturing step-by-step execution. | API call traces, stack traces in Java. | Deep troubleshooting and performance tuning. |
 
----
+
 
