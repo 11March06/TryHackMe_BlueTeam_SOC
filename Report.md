@@ -1,7 +1,7 @@
-1. Definition of Log
+# 1. Definition of Log
 - A "log" is a record of events, activities, or access attempts on a system. Logs are crucial for monitoring, detecting suspicious behavior, and investigating incidents. They track who logged in, when, from where, and what actions were performed.
 
-2. Types of Logs
+# 2. Types of Logs
 
 ## Types of Logs
 
