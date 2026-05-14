@@ -144,3 +144,191 @@ Table: Top 10 source IPs triggering alerts
 | **Rule Application & Correlation** | Apply detection rules and combine multiple conditions | Rule 1: ≥5 failed logins in 1 min; Rule 2: unusual GeoIP; Rule 3: privilege escalation → Combined alert: *Account compromise suspected* | Detect suspicious behavior and reduce false positives | Identify threats by requiring ≥3 matches | Inside SIEM engine | **[Splunk](ca://s?q=Splunk_SIEM)**, **[Elastic_Security](ca://s?q=Elastic_Security)**, **[Security_Onion](ca://s?q=Security_Onion)** |
 | **Alert Generation** | Create an alert when rules match | Alert: *Privilege escalation attempt detected*; Severity: High; Source: Linux server ``192.168.1.20``; Action: Lock account | Notify SOC analysts of incidents | Provide actionable intelligence | SIEM alert index | **[Wazuh_Manager](ca://s?q=Wazuh_SIEM)**, **Splunk Enterprise**, **Elastic Security** |
 | **Dashboard Visualization** | Display alerts and log trends in charts, tables, timelines | Pie chart: distribution of log levels (INFO, WARNING, ERROR); Timeline: failed logins over 24h; Table: top 10 source IPs triggering alerts | Visualize and monitor system health & threats | Help SOC analysts respond quickly | SOC console | **[Kibana](ca://s?q=Kibana_trong_ELK)**, **Splunk UI**, **Security Onion console** |
+
+
+# 4. Examples of malware:
+## 1. Trojan Emotet – spread via macro
+Log alert:
+Alert: PowerShell spawns from WinWord.exe, downloads file from suspicious domain, executes encoded command.
+
+3 constraints:
+Parent process is winword.exe (Microsoft Word) spawning powershell.exe.
+Network connection to a low-reputation domain (newly registered, not in top 1M Alexa).
+PowerShell command line contains an abnormally long base64 string (encoded command) and the -EncodedCommand parameter.
+
+## 2. Ransomware WannaCry – spreads via SMB
+Log alert:
+Alert: Multiple attempts to write encrypted files with .WNCRY extension, modification of boot record, and scanning port 445.
+
+3 constraints:
+Numerous files with extensions .WNCRY or .WNCRYT appear across multiple folders within seconds.
+Process tasksche.exe or mssecsvc.exe attempts to overwrite the Master Boot Record (MBR).
+Sends specially crafted SMB packets (EternalBlue) to multiple internal IPs in sequence.
+
+## 3. Keylogger – records keystrokes
+Log alert:
+Alert: Process injects code into explorer.exe, hooks keyboard interrupts, and writes log file to hidden system folder.
+
+3 constraints:
+Unsigned or invalidly signed process calls SetWindowsHookEx for global keyboard monitoring.
+Injects into explorer.exe memory space using WriteProcessMemory + CreateRemoteThread.
+Continuously writes a file containing keystroke data to a hidden path (e.g., C:\ProgramData\logs\kb.log).
+
+## 4. Backdoor Cobalt Strike – beaconing
+Log alert:
+Alert: Scheduled task 'MicrosoftEdgeUpdate' runs encoded PowerShell every 60 seconds, connecting to port 443 non-HTTP.
+
+3 constraints:
+Recurring task with short interval (<5 minutes), name mimics legitimate Windows tasks but not created by user.
+TLS connection to a suspicious IP, but traffic is not pure HTTPS (unusual cipher, abnormal handshake sequence).
+PowerShell runs with -WindowStyle Hidden -NoProfile -EncodedCommand, decoding to a command that fetches payload from C2.
+
+## 5. CoinMiner – high CPU usage
+Log alert:
+Alert: Unknown executable with random name (e.g., svchost.exe but not in System32) uses 100% CPU, connects to mining pool.
+
+3 constraints:
+Process name resembles a system process but path is different (e.g., C:\Temp\svchost.exe).
+Network connection to common mining pool ports (stratum+tcp://, ports 3333, 4444, 5555).
+Executable has no digital signature or conflicting signature; SHA256 matches a known miner database entry.
+
+## 6. Downloader – fetches additional payload
+Log alert:
+Alert: Script from HTA file launches mshta.exe, downloads binary from URL shortener, writes to AppData\Roaming.
+
+3 constraints:
+.hta file opened from email or Downloads folder calls mshta.exe with javascript: or vbscript: parameter.
+Download URL uses a shortening service (tinyurl, bit.ly) or direct IP without domain name.
+Downloaded file has .exe extension but is renamed to .tmp or .dat, then renames itself and executes.
+
+## 7. Rootkit – hides processes
+Log alert:
+Alert: Driver loaded with suspicious name, hook on SSDT for NtQueryDirectoryFile, and no digital signature.
+
+3 constraints:
+Driver (.sys) loaded from an unprotected location (e.g., C:\Windows\Temp) with a name similar to a legitimate driver but altered slightly.
+Calls ZwSetSystemInformation to load driver without going through Service Manager.
+Hook detected on SSDT or IDT (using tools like GMER) that hides processes, files, or registry keys.
+
+## 8. Spyware – screen capture
+Log alert:
+Alert: Process captures screen every second using BitBlt, sends image data to remote server via HTTP POST.
+
+3 constraints:
+Calls CreateCompatibleDC, BitBlt, GetDIBits at very high frequency (>1 per second).
+Image data is compressed and lightly encoded (base64) then sent via HTTP POST to a domain unrelated to the organization.
+Process runs under a legitimate name like svchost.exe or explorer.exe but from a user-writable directory.
+
+## 9. Exploit EternalBlue – lateral movement
+Log alert:
+Alert: SMBv1 negotiation with malformed TRANS2 packet, followed by kernel shellcode execution.
+
+3 constraints:
+SMB packet with TRANS2 structure containing abnormal data length (>= 4096 bytes) that holds shellcode.
+Immediately after, lsass.exe or svchost.exe executes code from a memory region with PAGE_EXECUTE_READWRITE permission.
+Connects to port 445 of multiple IPs within the same subnet, sequentially in ascending order.
+
+## 10. Web Shell – backdoor on web server
+Log alert:
+Alert: HTTP request to .aspx/.php with long query string containing system commands, response contains cmd.exe output.
+
+3 constraints:
+Target file has a suspicious name (cmd.aspx, shell.php, uploader.asp) located in a web-writable directory.
+Query string contains system commands such as whoami, net user, powershell URL-encoded.
+User-Agent header is abnormal (e.g., Microsoft Office Protocol Discovery) or does not match normal traffic patterns.
+
+
+# 5. WHere, How, Which, Why?
+
+## 1. Where does this log appear?
+
+Specifically, this log can appear in multiple locations within an enterprise system:
+
+| Location | Path / Interface |
+|----------|------------------|
+| **SIEM** (e.g., Splunk, Microsoft Sentinel, QRadar) | Alerts & Incidents dashboard, or search with `index=windows sourcetype="WinEventLog:Security" event_id=4688`. |
+| **EDR** (e.g., CrowdStrike, Defender for Endpoint, SentinelOne) | Process timeline, Detection Details showing MITRE ATT&CK `T1059.001` (PowerShell). |
+| **Windows Event Log** | `Microsoft-Windows-PowerShell/Operational` (event IDs 4103, 4104) + `Security` (event ID 4688 – process creation). |
+| **Sysmon** (if installed) | Event ID 1 (process creation), 3 (network connection), 11 (file create). |
+| **Network logs** (Firewall/Proxy) | Proxy logs (Squid, Zscaler) or firewall logs (Palo Alto) showing connection to `suspected-domain.xyz`. |
+
+> In a real environment, these logs are typically aggregated into a SIEM from multiple sources to form a single alert.
+
+---
+
+## 2. How is it detected? (Detection mechanism)
+
+The system does not rely on a single rule but combines **3 detection layers**:
+
+### Layer 1: Endpoint (Sysmon + Windows Event Log)
+
+- **Rule 1 (parent‑child process):**  
+  Sysmon event ID 1 records `winword.exe` spawning `powershell.exe`.  
+  This is abnormal because Word normally does not need to call PowerShell.
+
+- **Rule 2 (long encoded command):**  
+  PowerShell event ID 4104 (ScriptBlock Logging) records the command line.  
+  The system detects the `-EncodedCommand` parameter with a base64 string longer than 800 characters – a sign of a malware download script.
+
+### Layer 2: Network (DNS / Proxy / NDR)
+
+- **Rule 3 (connection to malicious domain):**  
+  When PowerShell executes `(New-Object Net.WebClient).DownloadString()`, it sends a DNS query.  
+  DNS or proxy logs show that the domain `suspected-domain.xyz` is present in a threat intelligence feed (VirusTotal, ThreatFox, AbuseIPDB).
+
+### Layer 3: Correlation engine (SIEM or EDR)
+
+- This engine groups the 3 rules together within a short time window (e.g., 10 seconds).  
+- If all 3 are true → a **High** severity alert is generated.
+
+---
+
+## 3. Which tools perform the detection?
+
+| Tool | Role in detecting the log above |
+|------|--------------------------------|
+| **Sysmon** (with logging for process, network, file) | Records detailed process chain (event ID 1), network (event ID 3), created file (event ID 11). |
+| **Windows PowerShell ScriptBlock Logging** (GPO: Turn on PowerShell Script Block Logging) | Records the entire script content, including decoded encoded commands. |
+| **Windows Defender for Endpoint / Microsoft 365 Defender** | Automatically analyzes the chain, compares with cloud intelligence, generates alert. |
+| **CrowdStrike Falcon / SentinelOne / Carbon Black** | EDR sensors on endpoints detect abnormal behavior. |
+| **SIEM** (Splunk ES, Azure Sentinel, IBM QRadar) | Aggregates logs from multiple sources, runs correlation rule: `(process_parent = winword AND process_child = powershell) AND (command_line contains EncodedCommand) AND (network_dest in threat_intel)`. |
+| **Threat Intelligence Platform** (MISP, ThreatFox, VirusTotal Enterprise) | Provides a list of malicious IPs/domains for matching. |
+
+---
+
+## 4. Asking "Why?"
+
+(Why are these 3 rules indicators of Emotet malware?)
+
+### Question 1: Why is `winword.exe` calling `powershell.exe` suspicious?
+
+**Answer:** Word can indeed use PowerShell for automation (VBA + Shell), but in reality, most users never see this. Emotet abuses macros in `.doc` files to invoke PowerShell because PowerShell allows downloading and executing code without writing an `.exe` file to disk (fileless). This is a "Living off the Land" technique.
+
+### Question 2: Why use a long `-EncodedCommand`?
+
+**Answer:** `EncodedCommand` helps malware hide the command content from plain sight (only a base64 string is visible). A length >800 characters indicates a complex script – e.g., downloading additional payload, bypassing AMSI, establishing persistence. Legitimate scripts are usually short and do not use long encoded commands in the command line.
+
+### Question 3: Why connect to a domain with a bad reputation?
+
+**Answer:** Emotet needs to download stage 2 from a C2 server. That domain is often newly created (<30 days old), has no legitimate web content, and has already been recorded in threat intelligence feeds by sandboxes or the security community. Connecting to such a domain is typical behavior of a downloader trojan.
+
+### Overall question: Why is any single rule insufficient to conclude malware?
+
+**Answer:**  
+- **Rule 1** (`winword → powershell`) could be a user intentionally running a legitimate macro (though rare).  
+- **Rule 2** (long encoded command) could also be used for legitimate administrative purposes.  
+- **Rule 3** (bad connection) could be a false positive if the domain was mislabeled.  
+
+**All three occurring within seconds** raises confidence to nearly 100%, because it is very unlikely that a legitimate task accidentally satisfies all three constraints.
+
+---
+
+## Summary detection playbook
+
+1. **Sysmon** records `winword.exe` creating `powershell.exe` → forwards to SIEM.  
+2. **PowerShell logging** records command line containing a long `-EncodedCommand`.  
+3. **DNS/Proxy logs** record a query to a suspicious domain.  
+4. **SIEM correlation rule** triggers after 10 seconds if all 3 conditions are met.  
+5. **EDR** automatically isolates the machine or blocks the process if automated response is configured.  
+
+**Result:** Alert is raised, and the analyst sees the log as above and confirms **Emotet infection**.
