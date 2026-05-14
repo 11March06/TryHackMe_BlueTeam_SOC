@@ -152,90 +152,90 @@ Log alert:
 Alert: PowerShell spawns from WinWord.exe, downloads file from suspicious domain, executes encoded command.
 
 3 constraints:
-Parent process is winword.exe (Microsoft Word) spawning powershell.exe.
-Network connection to a low-reputation domain (newly registered, not in top 1M Alexa).
-PowerShell command line contains an abnormally long base64 string (encoded command) and the -EncodedCommand parameter.
+  - Parent process is winword.exe (Microsoft Word) spawning powershell.exe.
+  - Network connection to a low-reputation domain (newly registered, not in top 1M Alexa).
+  - PowerShell command line contains an abnormally long base64 string (encoded command) and the -EncodedCommand parameter.
 
 ## 2. Ransomware WannaCry – spreads via SMB
 Log alert:
 Alert: Multiple attempts to write encrypted files with .WNCRY extension, modification of boot record, and scanning port 445.
 
 3 constraints:
-Numerous files with extensions .WNCRY or .WNCRYT appear across multiple folders within seconds.
-Process tasksche.exe or mssecsvc.exe attempts to overwrite the Master Boot Record (MBR).
-Sends specially crafted SMB packets (EternalBlue) to multiple internal IPs in sequence.
+  - Numerous files with extensions .WNCRY or .WNCRYT appear across multiple folders within seconds.
+  - Process tasksche.exe or mssecsvc.exe attempts to overwrite the Master Boot Record (MBR).
+  - Sends specially crafted SMB packets (EternalBlue) to multiple internal IPs in sequence.
 
 ## 3. Keylogger – records keystrokes
 Log alert:
 Alert: Process injects code into explorer.exe, hooks keyboard interrupts, and writes log file to hidden system folder.
 
 3 constraints:
-Unsigned or invalidly signed process calls SetWindowsHookEx for global keyboard monitoring.
-Injects into explorer.exe memory space using WriteProcessMemory + CreateRemoteThread.
-Continuously writes a file containing keystroke data to a hidden path (e.g., C:\ProgramData\logs\kb.log).
+  - Unsigned or invalidly signed process calls SetWindowsHookEx for global keyboard monitoring.
+  - Injects into explorer.exe memory space using WriteProcessMemory + CreateRemoteThread.
+  - Continuously writes a file containing keystroke data to a hidden path (e.g., C:\ProgramData\logs\kb.log).
 
 ## 4. Backdoor Cobalt Strike – beaconing
 Log alert:
 Alert: Scheduled task 'MicrosoftEdgeUpdate' runs encoded PowerShell every 60 seconds, connecting to port 443 non-HTTP.
 
 3 constraints:
-Recurring task with short interval (<5 minutes), name mimics legitimate Windows tasks but not created by user.
-TLS connection to a suspicious IP, but traffic is not pure HTTPS (unusual cipher, abnormal handshake sequence).
-PowerShell runs with -WindowStyle Hidden -NoProfile -EncodedCommand, decoding to a command that fetches payload from C2.
+  - Recurring task with short interval (<5 minutes), name mimics legitimate Windows tasks but not created by user.
+  - TLS connection to a suspicious IP, but traffic is not pure HTTPS (unusual cipher, abnormal handshake sequence).
+  - PowerShell runs with -WindowStyle Hidden -NoProfile -EncodedCommand, decoding to a command that fetches payload from C2.
 
 ## 5. CoinMiner – high CPU usage
 Log alert:
 Alert: Unknown executable with random name (e.g., svchost.exe but not in System32) uses 100% CPU, connects to mining pool.
 
 3 constraints:
-Process name resembles a system process but path is different (e.g., C:\Temp\svchost.exe).
-Network connection to common mining pool ports (stratum+tcp://, ports 3333, 4444, 5555).
-Executable has no digital signature or conflicting signature; SHA256 matches a known miner database entry.
+  - Process name resembles a system process but path is different (e.g., C:\Temp\svchost.exe).
+  - Network connection to common mining pool ports (stratum+tcp://, ports 3333, 4444, 5555).
+  - Executable has no digital signature or conflicting signature; SHA256 matches a known miner database entry.
 
 ## 6. Downloader – fetches additional payload
 Log alert:
 Alert: Script from HTA file launches mshta.exe, downloads binary from URL shortener, writes to AppData\Roaming.
 
 3 constraints:
-.hta file opened from email or Downloads folder calls mshta.exe with javascript: or vbscript: parameter.
-Download URL uses a shortening service (tinyurl, bit.ly) or direct IP without domain name.
-Downloaded file has .exe extension but is renamed to .tmp or .dat, then renames itself and executes.
+  - .hta file opened from email or Downloads folder calls mshta.exe with javascript: or vbscript: parameter.
+  - Download URL uses a shortening service (tinyurl, bit.ly) or direct IP without domain name.
+  - Downloaded file has .exe extension but is renamed to .tmp or .dat, then renames itself and executes.
 
 ## 7. Rootkit – hides processes
 Log alert:
 Alert: Driver loaded with suspicious name, hook on SSDT for NtQueryDirectoryFile, and no digital signature.
 
 3 constraints:
-Driver (.sys) loaded from an unprotected location (e.g., C:\Windows\Temp) with a name similar to a legitimate driver but altered slightly.
-Calls ZwSetSystemInformation to load driver without going through Service Manager.
-Hook detected on SSDT or IDT (using tools like GMER) that hides processes, files, or registry keys.
+  - Driver (.sys) loaded from an unprotected location (e.g., C:\Windows\Temp) with a name similar to a legitimate driver but altered slightly.
+  - Calls ZwSetSystemInformation to load driver without going through Service Manager.
+  - Hook detected on SSDT or IDT (using tools like GMER) that hides processes, files, or registry keys.
 
 ## 8. Spyware – screen capture
 Log alert:
 Alert: Process captures screen every second using BitBlt, sends image data to remote server via HTTP POST.
 
 3 constraints:
-Calls CreateCompatibleDC, BitBlt, GetDIBits at very high frequency (>1 per second).
-Image data is compressed and lightly encoded (base64) then sent via HTTP POST to a domain unrelated to the organization.
-Process runs under a legitimate name like svchost.exe or explorer.exe but from a user-writable directory.
+  - Calls CreateCompatibleDC, BitBlt, GetDIBits at very high frequency (>1 per second).
+  - Image data is compressed and lightly encoded (base64) then sent via HTTP POST to a domain unrelated to the organization.
+  - Process runs under a legitimate name like svchost.exe or explorer.exe but from a user-writable directory.
 
 ## 9. Exploit EternalBlue – lateral movement
 Log alert:
 Alert: SMBv1 negotiation with malformed TRANS2 packet, followed by kernel shellcode execution.
 
 3 constraints:
-SMB packet with TRANS2 structure containing abnormal data length (>= 4096 bytes) that holds shellcode.
-Immediately after, lsass.exe or svchost.exe executes code from a memory region with PAGE_EXECUTE_READWRITE permission.
-Connects to port 445 of multiple IPs within the same subnet, sequentially in ascending order.
+  - SMB packet with TRANS2 structure containing abnormal data length (>= 4096 bytes) that holds shellcode.
+  - Immediately after, lsass.exe or svchost.exe executes code from a memory region with PAGE_EXECUTE_READWRITE permission.
+  - Connects to port 445 of multiple IPs within the same subnet, sequentially in ascending order.
 
 ## 10. Web Shell – backdoor on web server
 Log alert:
 Alert: HTTP request to .aspx/.php with long query string containing system commands, response contains cmd.exe output.
 
 3 constraints:
-Target file has a suspicious name (cmd.aspx, shell.php, uploader.asp) located in a web-writable directory.
-Query string contains system commands such as whoami, net user, powershell URL-encoded.
-User-Agent header is abnormal (e.g., Microsoft Office Protocol Discovery) or does not match normal traffic patterns.
+  - Target file has a suspicious name (cmd.aspx, shell.php, uploader.asp) located in a web-writable directory.
+  - Query string contains system commands such as whoami, net user, powershell URL-encoded.
+  - User-Agent header is abnormal (e.g., Microsoft Office Protocol Discovery) or does not match normal traffic patterns.
 
 
 # 5. WHere, How, Which, Why?
