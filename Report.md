@@ -35,7 +35,7 @@ Below are some of the most important log files that administrators and security 
 
 ---
 
-# 🧬 Quick Comparison and Other Components
+## Quick Comparison and Other Components
 
 The table below summarises the key differences between the two logging systems:
 
