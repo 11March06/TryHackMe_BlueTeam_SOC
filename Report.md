@@ -48,6 +48,19 @@
 Detailed Process: From Raw Log to Alert in a SOC
 --> The lifecycle of a security event starts with a raw log entry and ends with a response action. This process follows a standard processing flow, often called the "SIEM Log Flow".
 
+| Phase | English Name | Main Task | Common Tools |
+| :--- | :--- | :--- | :--- |
+| 1 | Log Generation | Applications and systems record their activities. | Nginx, Apache, Windows Event Log, Syslog, AWS CloudTrail |
+| 2 | Log Collection | Centralise logs from all sources to a SIEM. | Logstash, Fluentd, Filebeat, Syslog‑ng, Apache Kafka |
+| 3 | Parsing | Split raw log strings into structured data fields. | Grok filter (Logstash), Parser (Fluentd), KQL, SPL |
+| 4 | Normalisation | Standardise field names from different sources. | Mutate filter (Logstash), ECS (Elastic Common Schema), CIM (Splunk) |
+| 5 | Enrichment | Add context (geo, blacklists, etc.) to data. | GeoIP filter, VirusTotal API, MISP, Logstash HTTP filter |
+| 6 | Indexing & Storage | Store processed data and index for fast search. | Elasticsearch, Splunk Indexer, Azure Data Explorer |
+| 7 | Correlation & Detection | Analyse and correlate events to detect threats. | Splunk ES, Microsoft Sentinel Analytics, Wazuh, Sumo Logic |
+| 8 | Alerting | Generate alerts when detection conditions are met. | Kibana Alerting, ElastAlert2, Splunk Notable Events |
+| 9 | SOC Analysis & Triage | Analyse and triage alerts to identify real threats. | TheHive, JIRA, ServiceNow, SA‑Investigator for Splunk |
+| 10 | Response & Remediation | Contain, eradicate the threat, and restore systems. | SOAR (Cortex XSOAR, Phantom), EDR, Logic Apps, Shuffle |
+
 ## Step 1: Log Generation
 * Definition: This is the starting point, where devices, servers, applications, and services within the IT infrastructure record their activities, events, errors, or actions. Each log line is a piece of the puzzle, a "narrative" of what is happening inside the digital infrastructure.
 
