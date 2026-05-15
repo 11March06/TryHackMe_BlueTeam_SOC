@@ -52,8 +52,7 @@ Detailed Process: From Raw Log to Alert in a SOC
 * Definition: This is the starting point, where devices, servers, applications, and services within the IT infrastructure record their activities, events, errors, or actions. Each log line is a piece of the puzzle, a "narrative" of what is happening inside the digital infrastructure.
 
 Typical Log Structure: Logs usually contain the following components:
-
-Timestamp: When the event occurred.
+  - Timestamp: When the event occurred.
   - Hostname / IP: The source that generated the log.
   - Service / Application: Name of the service or application.
   - Log Level / Severity: Severity level (INFO, WARN, ERROR, DEBUG).
