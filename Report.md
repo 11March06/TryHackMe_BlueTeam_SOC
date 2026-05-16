@@ -459,4 +459,10 @@ The system does not rely on a single rule but combines **3 detection layers**:
 # 5. ELK Stack 
 <img width="1679" height="313" alt="image" src="https://github.com/user-attachments/assets/581c822f-8546-4905-b6fb-585e5cb0e7d8" />
 <img width="1667" height="1009" alt="image" src="https://github.com/user-attachments/assets/c9e11b76-3912-4bd2-ab08-1b6069fba547" />
+Check IP
+<img width="1052" height="628" alt="image" src="https://github.com/user-attachments/assets/c4764abf-fa8d-4cc0-910c-7b5dedc8edf6" />
+<IP> : 5601
+--> Elastic
+<img width="1204" height="1037" alt="image" src="https://github.com/user-attachments/assets/b29681b9-1625-4862-bff7-55587a00db4b" />
+
 
