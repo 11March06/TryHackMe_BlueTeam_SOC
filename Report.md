@@ -455,3 +455,8 @@ The system does not rely on a single rule but combines **3 detection layers**:
 5. **EDR** automatically isolates the machine or blocks the process if automated response is configured.  
 
 **Result:** Alert is raised, and the analyst sees the log as above and confirms **Emotet infection**.
+
+# 5. ELK Stack 
+<img width="1679" height="313" alt="image" src="https://github.com/user-attachments/assets/581c822f-8546-4905-b6fb-585e5cb0e7d8" />
+<img width="1667" height="1009" alt="image" src="https://github.com/user-attachments/assets/c9e11b76-3912-4bd2-ab08-1b6069fba547" />
+
