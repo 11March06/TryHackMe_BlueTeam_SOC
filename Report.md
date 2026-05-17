@@ -509,3 +509,10 @@ syslog → General system log that aggregates messages from various services and
 | [access.log](ca://s?q=access.log_meaning) | Web traffic monitoring        | IPs, URLs, status codes               | Focused on web/application layer      |
 
 
+
+# 6. Splunk
+Download Splunk Enterprise (Server) in Ubuntu through website or wget.... Then, connecting through http://localhost:8000
+<img width="1254" height="1562" alt="image" src="https://github.com/user-attachments/assets/af111dda-24b7-41e0-ac88-dadf77fc10b4" />
+
+Download Splunk Universal Forwarder (Client) in Ubuntu through website or wget..
+<img width="656" height="437" alt="image" src="https://github.com/user-attachments/assets/a2df89e7-b4c3-409f-9527-482f6363c488" />
