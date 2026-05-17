@@ -465,4 +465,17 @@ Check IP
 --> Elastic
 <img width="1204" height="1037" alt="image" src="https://github.com/user-attachments/assets/b29681b9-1625-4862-bff7-55587a00db4b" />
 
+On Client-side
+<img width="1227" height="900" alt="image" src="https://github.com/user-attachments/assets/7d11764a-43ae-4352-99da-15ffff6f3b90" />
+Filebeat Connection - Successful 
+<img width="651" height="492" alt="image" src="https://github.com/user-attachments/assets/8799ffc0-9c1d-412e-a710-c0236651dc92" />
+Configuring Filebeat with INPUT and OUTPUT(IP:9200)
+
+--> <img width="1301" height="848" alt="image" src="https://github.com/user-attachments/assets/519ad192-0f2c-4ce7-8b13-eb9c67d65e65" />
+
+log.file.path : consists of these logs : syslog, audit, auth, kern, access 
+<img width="399" height="394" alt="image" src="https://github.com/user-attachments/assets/c3d4c4b0-b3c8-46a5-bab4-b18e76585ecd" />
+
+auth.log
+<img width="1208" height="777" alt="image" src="https://github.com/user-attachments/assets/74b64ac0-871b-4230-b354-eabfd2dc7522" />
 
