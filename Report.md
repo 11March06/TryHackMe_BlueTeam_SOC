@@ -579,7 +579,7 @@ Security-focused log maintained by auditd. It records sensitive actions like fil
 --> Important for compliance, forensic analysis, and detecting abnormal behavior.
 ---
 
-
+Client - side
 ## With Window
 ELK 
 Download and Setup Winlogbeat on PơerShell
@@ -602,5 +602,17 @@ Making logs
 
 3, Security log
 <img width="799" height="346" alt="image" src="https://github.com/user-attachments/assets/fd044fc1-b123-4308-8fc3-f3aac9fa5129" />
+
+
+
+Splunk
+Check Server Side Connection 
+<img width="684" height="38" alt="image" src="https://github.com/user-attachments/assets/76b8eff2-7935-4176-a550-9eb93c2d621b" /> Already done
+
+Setup Universal Forwarder
+<img width="498" height="382" alt="image" src="https://github.com/user-attachments/assets/3e4b1045-c18c-42c0-8e34-4afc978d4bc9" />
+
+Configuring 'inputs.conf' with path: "C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf"
+<img width="752" height="515" alt="image" src="https://github.com/user-attachments/assets/0e3b875b-ceb9-481d-97c0-45af700fd853" />
 
 
