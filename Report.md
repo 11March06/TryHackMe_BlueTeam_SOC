@@ -614,5 +614,40 @@ Setup Universal Forwarder
 
 Configuring 'inputs.conf' with path: "C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf"
 <img width="752" height="515" alt="image" src="https://github.com/user-attachments/assets/0e3b875b-ceb9-481d-97c0-45af700fd853" />
+Finally 
+<img width="1655" height="1643" alt="image" src="https://github.com/user-attachments/assets/cf5db812-d88a-40aa-a695-346efc656dc8" />
 
 
+# DIFFERENCE
+## 🪟 Windows Event Logs (Application, Security, System)
+
+| Log Type | Key Characteristics | Difference from Other Log Types | Concrete Example (from Kibana) |
+|----------|---------------------|--------------------------------|--------------------------------|
+| **Application** | Records events from software applications (errors, warnings, information). | – Does **not** contain security events (unlike `Security`).<br>– Does **not** contain OS/driver events (unlike `System`).<br>– Focuses solely on third‑party software and user‑installed applications. | `"message": "The storage optimiser couldn't complete boot optimisation on (C:) because: The user cancelled the operation. (0x89000006)"`<br>`"winlog.provider_name": "Microsoft-Windows-Defrag"` |
+| **Security** | Most important for security: logon (success/failure), privilege changes, process creation, log clearing. | – Unlike `Application` (no application events).<br>– Unlike `System` (no driver/service events).<br>– Based on Audit Policy, not default app/system logging. | `"event.code": 4625`<br>`"message": "An account failed to log on. Account Name: Administrator, Source Network Address: 192.168.1.100, Failure Reason: Unknown user name or bad password."` |
+| **System** | Events from the OS, drivers, system services (startup, driver errors, configuration changes). | – Unlike `Application` (no application events).<br>– Unlike `Security` (no authentication/authorization events).<br>– Focuses on system stability and hardware. | `"event.code": 16`<br>`"message": "The access history in hive \??\C:\ProgramData\Microsoft\Provisioning\Microsoft-Desktop-Provisioning-Sequence.dat was cleared updating 0 keys and creating 0 modified pages."`<br>`"winlog.provider_name": "Microsoft-Windows-Kernel-General"` |
+
+---
+
+## 🐧 Linux System Logs (syslog, auth.log, kern.log, audit.log – cron excluded)
+
+| Log File | Key Characteristics | Difference from Other Log Types | Concrete Example (from lab) |
+|----------|---------------------|--------------------------------|-----------------------------|
+| **/var/log/syslog** | General system log: kernel, cron, mail, daemons, user processes. | – All‑purpose but less detailed than specialised logs.<br>– Unlike `auth.log` (only authentication).<br>– Unlike `kern.log` (only kernel).<br>– Unlike `audit.log` (requires installation, much more detailed). | `May 17 20:51:01 ubuntu1103 CRON[2345]: (root) CMD (test cron job)`<br>`May 17 20:51:02 ubuntu1103 systemd[1]: Started Session 12 of user kali.` |
+| **/var/log/auth.log** | Authentication & authorisation: SSH logins, sudo, su, password changes. | – Contains **no** kernel, cron, mail, daemon events (unlike `syslog`).<br>– Focuses entirely on access security, useful for brute‑force detection. | `May 17 17:30:22 ubuntu1103 sshd[1234]: Failed password for invalid user test from 192.168.1.200 port 54321 ssh2`<br>`May 17 17:30:25 ubuntu1103 sudo:   kali : TTY=pts/0 ; PWD=/home/kali ; USER=root ; COMMAND=/bin/ls` |
+| **/var/log/kern.log** | Kernel messages: drivers, hardware, memory errors, network activity at kernel level. | – Unlike `syslog` (which also contains kernel but less detail).<br>– Unlike `auth.log` (no authentication).<br>– Used for low‑level system/hardware diagnostics. | `May 17 14:32:45 ubuntu1103 kernel: [12345.678] usb 2-1: new high-speed USB device number 5 using ehci-pci`<br>`May 17 14:32:46 ubuntu1103 kernel: [12346.789] segfault at 7f8c9a1c ip 00007f8c9a1c sp 00007ffc2d8c error 4 in libc-2.35.so` |
+| **/var/log/audit/audit.log** | Detailed audit log based on custom rules (auditd): file access, command execution, configuration changes, syscalls. | – **Not a default log** (requires `auditd` installation).<br>– Provides the highest granularity (down to syscalls).<br>– Unlike `auth.log` (only authentication results), `kern.log` (kernel), `syslog` (general). | `type=SYSCALL msg=audit(1747467894.123:456): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7f8c9a1c a2=80000 a3=1b6 items=1 ppid=1234 pid=5678 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=1 comm="cat" exe="/bin/cat" key="passwd_access"` |
+
+---
+
+## 💡 Core Differences Summary
+
+| Log | Primary Scope | What Makes It Different |
+|-----|---------------|--------------------------|
+| **Application (Win)** | Software applications | No security or system events. |
+| **Security (Win)** | Authentication, authorisation, security | Based on Audit Policy, not app/driver logs. |
+| **System (Win)** | OS, drivers, services | Focuses on system stability, not apps or security. |
+| **syslog (Linux)** | General system events | All‑purpose but less detailed than specialised logs. |
+| **auth.log (Linux)** | Authentication, sudo, login | Only access security; no kernel/cron/daemon. |
+| **kern.log (Linux)** | Kernel, drivers, hardware | More detailed kernel info than syslog; no authentication. |
+| **audit.log (Linux)** | Syscalls, file access, command execution | Highest detail, requires separate installation; completely different from default logs. |
