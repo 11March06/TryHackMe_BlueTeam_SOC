@@ -470,12 +470,42 @@ On Client-side
 Filebeat Connection - Successful 
 <img width="651" height="492" alt="image" src="https://github.com/user-attachments/assets/8799ffc0-9c1d-412e-a710-c0236651dc92" />
 Configuring Filebeat with INPUT and OUTPUT(IP:9200)
-
 --> <img width="1301" height="848" alt="image" src="https://github.com/user-attachments/assets/519ad192-0f2c-4ce7-8b13-eb9c67d65e65" />
 
-log.file.path : consists of these logs : syslog, audit, auth, kern, access 
-<img width="399" height="394" alt="image" src="https://github.com/user-attachments/assets/c3d4c4b0-b3c8-46a5-bab4-b18e76585ecd" />
 
+## Types of Logs - ELK STACK
+Ubuntu-Linux
 auth.log
 <img width="1208" height="777" alt="image" src="https://github.com/user-attachments/assets/74b64ac0-871b-4230-b354-eabfd2dc7522" />
+auth.log → Records authentication events (logins, logouts, password changes). Useful for detecting failed logins, brute-force attacks, or unusual access attempts.
+
+
+access.log
+<img width="1367" height="743" alt="image" src="https://github.com/user-attachments/assets/86ef8152-c2a4-422e-98a8-aef64963d061" />
+access.log → Web server log of client requests (IP, URL, status code, user-agent). Useful for traffic analysis, detecting web attacks, and performance monitoring.
+
+
+audit.log
+<img width="1325" height="916" alt="image" src="https://github.com/user-attachments/assets/1122ef5d-320b-4d63-96fa-1cd59130942f" />
+audit.log → Tracks security auditing events (who did what, when, and where). Essential for compliance, forensic analysis, and monitoring user actions.
+
+
+kern.log
+<img width="1328" height="856" alt="image" src="https://github.com/user-attachments/assets/173dd67a-217f-4109-82bd-5159870d203d" />
+kern.log → Contains kernel messages (hardware detection, driver issues, system crashes). Important for debugging hardware and OS-level problems.
+
+
+syslog
+<img width="1334" height="852" alt="image" src="https://github.com/user-attachments/assets/6a8c8d8b-706f-493b-ae04-d6b9c77388d1" />
+syslog → General system log that aggregates messages from various services and daemons. Provides a broad view of system activity.
+
+
+| **Log Type** | **Main Purpose**             | **Highlights**                          | **Key Difference**                  |
+|--------------|-------------------------------|------------------------------------------|--------------------------------------|
+| [auth.log](ca://s?q=auth.log_meaning)   | Authentication tracking        | Login success/failure, SSH attempts   | Focused on user access security      |
+| [kern.log](ca://s?q=kern.log_meaning)   | Kernel & hardware events       | Driver errors, crashes, boot messages | Focused on system internals          |
+| [syslog](ca://s?q=syslog_meaning)       | General system activity        | Daemon/service logs, cron jobs        | Broad coverage of system events       |
+| [audit.log](ca://s?q=audit.log_meaning) | Security auditing              | User actions, compliance records      | Ensures accountability & compliance   |
+| [access.log](ca://s?q=access.log_meaning) | Web traffic monitoring        | IPs, URLs, status codes               | Focused on web/application layer      |
+
 
