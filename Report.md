@@ -474,7 +474,7 @@ Configuring Filebeat with INPUT and OUTPUT(IP:9200)
 
 
 ## Types of Logs - ELK STACK
-Ubuntu-Linux
+## Ubuntu-Linux - with filebeat
 auth.log
 <img width="1208" height="777" alt="image" src="https://github.com/user-attachments/assets/74b64ac0-871b-4230-b354-eabfd2dc7522" />
 auth.log → Records authentication events (logins, logouts, password changes). Useful for detecting failed logins, brute-force attacks, or unusual access attempts.
@@ -513,6 +513,83 @@ syslog → General system log that aggregates messages from various services and
 # 6. Splunk
 Download Splunk Enterprise (Server) in Ubuntu through website or wget.... Then, connecting through http://localhost:8000
 <img width="1254" height="1562" alt="image" src="https://github.com/user-attachments/assets/af111dda-24b7-41e0-ac88-dadf77fc10b4" />
+Settings --> Forwarding and receiving --> Add new receiving port : 9997 --> SAVE
 
 Download Splunk Universal Forwarder (Client) in Ubuntu through website or wget..
 <img width="656" height="437" alt="image" src="https://github.com/user-attachments/assets/a2df89e7-b4c3-409f-9527-482f6363c488" />
+
+Configuring - monitoring these logs : auth, audit, access, kern, syslog
+<img width="646" height="402" alt="image" src="https://github.com/user-attachments/assets/794e99cc-05fd-435b-b3e2-7106f6a4a959" />
+
+Connection with 192.168.114.129:9997 
+<img width="661" height="161" alt="image" src="https://github.com/user-attachments/assets/45e9a550-0001-4d8b-8feb-1128085fdc61" />
+
+Testing logs 
+<img width="650" height="293" alt="image" src="https://github.com/user-attachments/assets/1a02cf59-0d48-41b7-a112-2164006cc85e" />
+
+Finally 
+<img width="1577" height="1455" alt="image" src="https://github.com/user-attachments/assets/8cdca806-7a02-4bf3-8d5a-0d30fe160339" />
+--> Seeing the log on dashboard, with five mentioned types of logs.
+
+
+
+
+
+
+
+# Logs
+## Auth logs
+<img width="630" height="217" alt="image" src="https://github.com/user-attachments/assets/355698d4-49a3-405f-8ce8-4441ac913ec7" />
+
+## Kern logs
+<img width="656" height="71" alt="image" src="https://github.com/user-attachments/assets/be9de65e-c0a8-4873-9543-25863f615bcd" />
+
+## Access logs 
+Connecting http://localhost --> making log
+
+## Syslog 
+<img width="647" height="22" alt="image" src="https://github.com/user-attachments/assets/36bfdfaa-e1ff-491e-8249-78416e91e1df" />
+
+## Audit log
+<img width="643" height="66" alt="image" src="https://github.com/user-attachments/assets/b7959347-4ad5-4cb9-97ad-8e5e65971323" />
+
+---
+1. Syslog
+General system log that records events from services, daemons, and the operating system.
+--> Useful for monitoring overall system health and troubleshooting service issues.
+
+2. Auth log
+Authentication log that captures login attempts, sudo usage, and password failures.
+--> Critical for detecting unauthorized access attempts or brute-force attacks.
+
+3. Kernel log
+Records messages from the Linux kernel, such as hardware events, driver issues, or module loading errors.
+--> Helps diagnose hardware problems or kernel-level failures.
+
+4. Apache access log
+Tracks every HTTP request to the Apache web server: client IP, requested URL, status codes (200, 404, 500).
+--> Useful for analyzing traffic, user behavior, and spotting suspicious activity.
+
+5. Apache error log
+Records server-side errors, misconfigurations, and application issues.
+--> Essential for debugging web applications and identifying potential vulnerabilities.
+
+6. Audit log
+Security-focused log maintained by auditd. It records sensitive actions like file access, permission changes, or root-level commands.
+--> Important for compliance, forensic analysis, and detecting abnormal behavior.
+---
+
+
+## With Window
+ELK 
+Download and Setup Winlogbeat on PơerShell
+<img width="980" height="514" alt="image" src="https://github.com/user-attachments/assets/042e31ab-8c23-4967-a3a1-2be61e5a184f" />
+* winlogbeat.yml
+<img width="467" height="370" alt="image" src="https://github.com/user-attachments/assets/49e6cba6-53ec-489b-b12d-5d6f25dcaa42" />
+
+Connecting to 192.168.114.129:9200 (ElasticSearch)
+On web 192.168.114.129 (Kibana)
+
+--> Elastic View - With winlogbeat
+<img width="1216" height="770" alt="image" src="https://github.com/user-attachments/assets/018a8aec-1047-4c1a-8999-9df6d67aa7cb" />
+
