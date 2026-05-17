@@ -593,3 +593,14 @@ On web 192.168.114.129 (Kibana)
 --> Elastic View - With winlogbeat
 <img width="1216" height="770" alt="image" src="https://github.com/user-attachments/assets/018a8aec-1047-4c1a-8999-9df6d67aa7cb" />
 
+Making logs
+1, Application log
+<img width="1575" height="137" alt="image" src="https://github.com/user-attachments/assets/7230f4fc-68af-4082-9de5-63d124a5978d" />
+
+2, System log
+<img width="1562" height="51" alt="image" src="https://github.com/user-attachments/assets/92119475-9265-44af-83f6-0b7ab12aafda" />
+
+3, Security log
+<img width="799" height="346" alt="image" src="https://github.com/user-attachments/assets/fd044fc1-b123-4308-8fc3-f3aac9fa5129" />
+
+
