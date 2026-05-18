@@ -651,3 +651,28 @@ Finally
 | **auth.log (Linux)** | Authentication, sudo, login | Only access security; no kernel/cron/daemon. |
 | **kern.log (Linux)** | Kernel, drivers, hardware | More detailed kernel info than syslog; no authentication. |
 | **audit.log (Linux)** | Syscalls, file access, command execution | Highest detail, requires separate installation; completely different from default logs. |
+
+# 7. Wazuh
+## Server-side: 
+Wazuh - Installation : (Indexer - Cluster - Server - Dashboard )
+<img width="1461" height="735" alt="image" src="https://github.com/user-attachments/assets/fb2f9b4f-e3d9-42cc-ac84-d4ce4d50c436" />
+./wazuh-install.sh -i --wazuh-dashboard
+
+Finally 
+<img width="1501" height="1389" alt="image" src="https://github.com/user-attachments/assets/4a5a5308-b937-4134-8b85-c99f229c6657" />
+
+Hitting Security -> Internal Users -> Create Internal User (tk: cybex; mk: wzhcybex)
+
+## Client-side: 
+Deploy a nre agent - client - ubbuntu
+<img width="984" height="1165" alt="image" src="https://github.com/user-attachments/assets/40066445-565a-4182-b6f3-f891d09c5fdd" />
+Commanline in client - ubuntu 
+<img width="1500" height="490" alt="image" src="https://github.com/user-attachments/assets/e9b1e80e-c42b-4f20-a763-4780db27122a" />
+
+Successfully Download with 1 Active Ubuntu 
+<img width="1519" height="520" alt="image" src="https://github.com/user-attachments/assets/3a09774f-08a2-480c-a8fd-08e68d6c19f1" />
+
+Security Events
+<img width="1527" height="1520" alt="image" src="https://github.com/user-attachments/assets/f0e668a9-94f4-4cff-b8de-24e12ff1757d" />
+
+
