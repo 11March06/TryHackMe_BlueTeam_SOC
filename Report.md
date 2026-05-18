@@ -664,7 +664,7 @@ Finally
 Hitting Security -> Internal Users -> Create Internal User (tk: cybex; mk: wzhcybex)
 
 ## Client-side: 
-Deploy a nre agent - client - ubbuntu
+Deploy a new agent - client - ubbuntu
 <img width="984" height="1165" alt="image" src="https://github.com/user-attachments/assets/40066445-565a-4182-b6f3-f891d09c5fdd" />
 Commanline in client - ubuntu 
 <img width="1500" height="490" alt="image" src="https://github.com/user-attachments/assets/e9b1e80e-c42b-4f20-a763-4780db27122a" />
@@ -675,4 +675,90 @@ Successfully Download with 1 Active Ubuntu
 Security Events
 <img width="1527" height="1520" alt="image" src="https://github.com/user-attachments/assets/f0e668a9-94f4-4cff-b8de-24e12ff1757d" />
 
+Deploy a new agent  - client - window
+<img width="1580" height="1541" alt="image" src="https://github.com/user-attachments/assets/64a63691-f67a-4dec-80d5-5b5777b07502" />
 
+Commandline in client - window 
+<img width="976" height="249" alt="image" src="https://github.com/user-attachments/assets/668e7b67-2bd5-4b64-991c-a0cb5c386d28" />
+
+Successfully Connection 
+<img width="1522" height="668" alt="image" src="https://github.com/user-attachments/assets/7799eab0-8794-4fe7-8c51-dd7fc5701f7b" />
+
+
+# 7. RAW LOG TO SIEM
+SYSLOG
+0. Making log
+<img width="649" height="47" alt="image" src="https://github.com/user-attachments/assets/98fd9862-fddf-4dce-a7af-58a260ec525f" />
+
+1. RAW LOG : tail -n 1 /var/log/syslog
+2. Filebeat reads the new line
+Filebeat (installed on the client) runs as a service, continuously monitoring the configured log files. When it detects a new line, it reads it and passes it to the processor.
+3. Parsing – syntactic analysis
+Filebeat applies a Grok pattern (a named regex) to extract components.
+
+Default Grok pattern for syslog:
+
+      text
+      %{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:hostname} %{DATA:program}(?:\[%{POSINT:pid}\])?: %{GREEDYDATA:message}
+
+Temporary result (non‑normalized fields):
+
+    text
+    timestamp: "May 19 15:30:45"
+    hostname: "ubuntu11031"
+    program: "ubuntu11031"
+    message: "sshd: Failed password for invalid user admin from 192.168.1.100 port 54321 ssh2"
+
+4. (Optional) Additional processor – extract details
+If a dissect or custom grok for the "Failed password" line is configured, Filebeat further splits the message field:
+
+-      text
+       user.name: "admin"
+       source.ip: "192.168.1.100"
+       port: 54321
+       failure: "Failed password"
+
+5. Normalization according to ECS (Elastic Common Schema)
+
+Filebeat and Elasticsearch automatically add or map fields to the Elastic Common Schema, ensuring consistent field names across different log sources.
+
+- `@timestamp` ← convert `timestamp` from `May 19 15:30:45` to ISO8601 (with timezone).
+- `host.name` ← `hostname`
+- `process.name` ← `program` (if the program is `sshd`, it may be extracted separately)
+- `user.name`, `source.ip` kept as is.
+- `event.category`: assigned `authentication` (based on content)
+- `event.type`: `denied`
+- `event.outcome`: `failure`
+- `log.file.path`: automatically added with the source file path.
+- `agent.type`, `agent.version`, `ecs.version` added.
+
+---
+
+6. Package as JSON and send to Elasticsearch
+
+Filebeat creates a complete JSON document and sends it via HTTP to Elasticsearch.
+
+**Example document (abbreviated):**
+
+```json
+{
+  "@timestamp": "2026-05-19T08:30:45.000Z",
+  "host": { "name": "ubuntu11031" },
+  "source": { "ip": "192.168.1.100" },
+  "user": { "name": "admin" },
+  "event": {
+    "category": "authentication",
+    "type": "denied",
+    "outcome": "failure"
+  },
+  "message": "sshd: Failed password for invalid user admin from 192.168.1.100 port 54321 ssh2",
+  "log": { "file": { "path": "/var/log/syslog" } },
+  "agent": { "type": "filebeat", "version": "8.19.15" }
+}
+
+```
+7. Elasticsearch stores and indexes
+Elasticsearch receives the JSON, indexes each field, enabling extremely fast queries.
+
+8. Kibana displays
+When you go to Discover, Kibana sends a query to Elasticsearch and displays the results in a table. You can expand each row to see the separated fields.
