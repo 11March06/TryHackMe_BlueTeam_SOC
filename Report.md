@@ -761,6 +761,6 @@ Filebeat creates a complete JSON document and sends it via HTTP to Elasticsearch
 ```
 7. Elasticsearch stores and indexes
 Elasticsearch receives the JSON, indexes each field, enabling extremely fast queries.
-
 8. Kibana displays
 When you go to Discover, Kibana sends a query to Elasticsearch and displays the results in a table. You can expand each row to see the separated fields.
+<img width="1466" height="774" alt="image" src="https://github.com/user-attachments/assets/85657456-d1e7-44ba-88d1-a65a713032ab" />
