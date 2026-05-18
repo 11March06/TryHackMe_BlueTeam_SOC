@@ -686,6 +686,8 @@ Successfully Connection
 
 
 # 7. RAW LOG TO SIEM
+<img width="1404" height="738" alt="image" src="https://github.com/user-attachments/assets/7d39f83d-30ce-4d38-a2e8-96a946828880" />
+
 SYSLOG
 0. Making log
 <img width="649" height="47" alt="image" src="https://github.com/user-attachments/assets/98fd9862-fddf-4dce-a7af-58a260ec525f" />
@@ -693,9 +695,9 @@ SYSLOG
 1. RAW LOG : tail -n 2 /var/log/syslog
 <img width="649" height="64" alt="image" src="https://github.com/user-attachments/assets/b9507309-3f47-4ae0-b7bd-cc278a825cad" />
 
-3. Filebeat reads the new line
+2. Filebeat reads the new line
 Filebeat (installed on the client) runs as a service, continuously monitoring the configured log files. When it detects a new line, it reads it and passes it to the processor.
-4. Parsing – syntactic analysis
+3. Parsing – syntactic analysis
 Filebeat applies a Grok pattern (a named regex) to extract components.
 
 Default Grok pattern for syslog:
