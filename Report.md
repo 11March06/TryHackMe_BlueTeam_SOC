@@ -766,3 +766,106 @@ Elasticsearch receives the JSON, indexes each field, enabling extremely fast que
 8. Kibana displays
 When you go to Discover, Kibana sends a query to Elasticsearch and displays the results in a table. You can expand each row to see the separated fields.
 <img width="1466" height="774" alt="image" src="https://github.com/user-attachments/assets/85657456-d1e7-44ba-88d1-a65a713032ab" />
+
+
+KERN LOG
+<img width="672" height="314" alt="image" src="https://github.com/user-attachments/assets/b0ac6b74-15c8-4d45-a70e-3795183e1519" />
+
+Method B – Simulated AppArmor denial (easy to control the message)
+```bash
+echo "kernel: audit: type=1400 audit(1747670400.123:456): apparmor=\"DENIED\" operation=\"open\" profile=\"/usr/sbin/sshd\" name=\"/etc/shadow\" pid=1234 comm=\"sshd\" requested_mask=\"r\" denied_mask=\"r\" fsuid=0 ouid=0" | sudo tee -a /var/log/kern.log
+
+```
+Step 1: Verify that the raw log was written
+```bash
+tail -n 2 /var/log/kern.log
+```
+Example raw line (USB):
+
+```text
+May 19 16:20:15 ubuntu11031 kernel: [12345.678901] usb 2-1: new high-speed USB device number 5 using ehci-pci
+```
+Step 2: Filebeat reads the new line
+Filebeat monitors /var/log/kern.log via the system.kernel module.
+Check that the module is enabled:
+```bash
+sudo filebeat modules list | grep kernel
+```
+Expected: kernel - enabled
+If not enabled, enable it:
+```bash
+sudo filebeat modules enable system
+sudo filebeat setup -e
+sudo systemctl restart filebeat
+```
+
+Step 3: Parsing – Apply Grok pattern
+Filebeat (through the system module pipeline) automatically applies the Grok pattern:
+
+```text
+%{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:hostname} kernel: %{GREEDYDATA:kernel.message}
+
+```
+Temporary extracted fields:
+
+```text
+timestamp: "May 19 16:20:15"
+hostname: "ubuntu11031"
+kernel.message: "usb 2-1: new high-speed USB device number 5 using ehci-pci"
+```
+Step 4: (Optional) Extract details – add a processor
+Add a dissect processor to /etc/filebeat/filebeat.yml to extract more fields from kernel.message (e.g., idVendor, idProduct if present):
+
+```yaml
+processors:
+  - dissect:
+      tokenizer: "usb %{usb.port}: new %{usb.speed} USB device number %{usb.devnum} using %{usb.host}"
+      field: "kernel.message"
+      when:
+        contains: "new high-speed USB device"
+Then restart Filebeat: sudo systemctl restart filebeat.
+```
+Step 5: Normalization to ECS (Elastic Common Schema)
+The Elasticsearch pipeline (or Filebeat) automatically adds / maps fields:
+
+```ECS Field	Example Value
+@timestamp	2026-05-19T09:20:15.000Z (ISO8601, UTC)
+host.name	ubuntu11031
+event.category	"network" (for USB) or "authentication" (for AppArmor)
+event.type	"info" or "denied"
+message	original raw log text
+log.file.path	/var/log/kern.log
+agent.type	filebeat
+ecs.version	8.0.0
+```
+Step 6: Package as JSON and send to Elasticsearch
+Filebeat creates a JSON document, for example:
+```
+json
+{
+  "@timestamp": "2026-05-19T09:20:15.000Z",
+  "host": { "name": "ubuntu11031" },
+  "event": {
+    "category": "network",
+    "type": "info"
+  },
+  "message": "usb 2-1: new high-speed USB device number 5 using ehci-pci",
+  "log": { "file": { "path": "/var/log/kern.log" } },
+  "agent": { "type": "filebeat", "version": "8.19.15" }
+}
+```
+It sends the document via HTTP POST to http://192.168.114.129:9200/_bulk.
+
+Step 7: Elasticsearch stores, indexes, and Kibana displays
+Elasticsearch stores the document in an index filebeat-*.
+
+Access Kibana at http://192.168.114.129:5601.
+
+Go to Discover, select index pattern filebeat-*.
+
+Set time range to Last 15 minutes.
+
+Search for "usb" or "apparmor".
+
+Expand a log entry to see all normalized fields.
+
