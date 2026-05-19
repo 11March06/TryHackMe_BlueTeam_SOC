@@ -869,3 +869,61 @@ Search for "usb" or "apparmor".
 
 Expand a log entry to see all normalized fields.
 
+
+AUDIT LOG
+STEP 0-1. Making log and seeing raw log
+<img width="1118" height="521" alt="image" src="https://github.com/user-attachments/assets/e1544ff8-b29d-47f5-97ff-5ee5c81f7651" />
+
+Step 2: Verify Raw Log Entry
+Check that the event was written to /var/log/audit/audit.log:
+
+bash
+sudo tail -n 5 /var/log/audit/audit.log | grep -i "test_audit_key"
+Example raw log lines:
+
+text
+type=SYSCALL msg=audit(1747672992.001:1234): arch=c000003e syscall=2 success=yes exit=3 ... comm="cat" exe="/bin/cat" key="test_audit_key"
+type=PATH msg=audit(1747672992.001:1234): item=0 name="/etc/passwd" ...
+Step 3: Configure Filebeat Module for auditd
+Enable the module and set the correct path:
+
+bash
+sudo filebeat modules enable auditd
+Create/edit /etc/filebeat/modules.d/auditd.yml:
+
+yaml
+- module: auditd
+  log:
+    enabled: true
+    var.paths: ["/var/log/audit/audit.log"]
+Verify configuration:
+
+bash
+sudo filebeat test config
+Step 4: Load Pipeline and Dashboards
+bash
+sudo filebeat setup --pipelines --modules auditd
+
+
+Step 5: Verify Data in Elasticsearch
+Search for the audit event using curl:
+
+bash
+curl -u elastic:elastic1103 -X GET "http://192.168.114.129:9200/filebeat-*/_search?q=auditd.key:test_audit_key&pretty"
+If successful, you'll see a JSON document with fields like auditd.key, file.path, process.name, etc.
+
+Step 6: Explore in Kibana
+Open browser → http://192.168.114.129:5601
+
+Login: elastic / elastic1103
+
+Go to Discover
+
+Select index pattern filebeat-* (create it if missing: name filebeat-*, time field @timestamp)
+
+Set time range Last 15 minutes or Today
+
+Search with KQL: auditd.key: "test_audit_key"
+Expand a row to see all structured fields (e.g., process.name, file.path, user.name, event.outcome)
+
+
